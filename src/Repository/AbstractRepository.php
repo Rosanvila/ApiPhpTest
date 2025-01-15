@@ -30,7 +30,8 @@ abstract class AbstractRepository
         return $this->fetchResult($result);
     }
 
-    public function findOneById(int $id): ?array {
+    public function findOneById(int $id): ?array
+    {
         $query = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = :id");
         $query->execute(['id' => $id]);
 
@@ -45,7 +46,19 @@ abstract class AbstractRepository
         return $this->fetchResult($query->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    
+
     abstract public function fetchResult(array $result): array;
     abstract public function add(AbstractEntity $data): bool;
+
+    public function __call(string $name, array $arguments)
+    {
+        try {
+            if (str_starts_with($name, 'findBy')) {
+                $field = strtolower(substr($name, 6));
+                return $this->findBy($field, $arguments[0]);
+            }
+        } catch (Exception $e) {
+            echo "Method $name not exists: " . $e->getMessage();
+        }
+    }
 }

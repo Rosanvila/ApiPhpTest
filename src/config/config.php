@@ -1,5 +1,4 @@
 <?php
-
 return [
     'dsn' => 'mysql:host=localhost;dbname=apiphptest;charset=utf8',
     'username' => 'root',
