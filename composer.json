@@ -1,0 +1,16 @@
+{
+    "name": "robin/api-php-test",
+    "description": "création API avec PHP",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Robin Sanchez-Avila",
+            "email": "robin.sa28@gmail.com"
+        }
+    ],
+    "require": {}
+}
