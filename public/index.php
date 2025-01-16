@@ -1,9 +1,8 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-// Charger les routes
-$routes = require __DIR__ . '/src/config/routes.php';
+$routes = require __DIR__ . '/../src/config/routes.php';
 
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
