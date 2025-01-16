@@ -13,6 +13,7 @@
         }
     ],
     "require": {
-        "guzzlehttp/psr7": "^2.7"
+        "guzzlehttp/psr7": "^2.7",
+        "laminas/laminas-httphandlerrunner": "^2.11"
     }
 }

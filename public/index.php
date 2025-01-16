@@ -2,6 +2,7 @@
 
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -29,10 +30,9 @@ if (array_key_exists($routeKey, $routes)) {
             throw new Exception("Method '$methodName' not found in controller '$controllerClass'");
         }
 
-        $response = $controller->$methodName($request);
+        $result = $controller->$methodName($request);
 
-        // Créer la réponse PSR-7
-        $response = new Response(200, ['Content-Type' => 'application/json'], json_encode($response));
+        $response = new Response(200, ['Content-Type' => 'application/json'], json_encode($result));
     } catch (InvalidArgumentException $e) {
         $response = new Response(400, [], json_encode(['error' => $e->getMessage()]));
     } catch (Exception $e) {
@@ -42,6 +42,5 @@ if (array_key_exists($routeKey, $routes)) {
     $response = new Response(404, [], json_encode(['error' => 'Route not found']));
 }
 
-// Envoyer la réponse
-header('Content-Type: application/json');
-echo $response->getBody();
+$emitter = new SapiEmitter();
+$emitter->emit($response);
