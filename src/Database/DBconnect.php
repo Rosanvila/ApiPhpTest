@@ -8,13 +8,13 @@ use PDOException;
 final class DBconnect
 {
     private static DBconnect $instance;
-    private PDO $connection;
+    private PDO $db;
 
     private function __construct()
     {
         $config = require __DIR__ . '/../config/config.php';
         try {
-            $this->connection = new PDO($config['dsn'], $config['username'], $config['password'], $config['options']);
+            $this->db = new PDO($config['dsn'], $config['username'], $config['password'], $config['options']);
         } catch (PDOException $e) {
             die("Connection failed: " . $e->getMessage());
         }
@@ -31,13 +31,13 @@ final class DBconnect
 
     public function getConnection(): PDO
     {
-        return $this->connection;
+        return $this->db;
     }
 
     public function testConnection(): bool
     {
         try {
-            $this->connection->query('SELECT 1');
+            $this->db->query('SELECT 1');
             return true;
         } catch (PDOException $e) {
             return false;
