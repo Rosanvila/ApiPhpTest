@@ -12,5 +12,7 @@
             "email": "robin.sa28@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "guzzlehttp/psr7": "^2.7"
+    }
 }

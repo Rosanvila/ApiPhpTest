@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Entity\User;
+use Psr\Http\Message\ServerRequestInterface;
 use PDOException;
 
 class UserController
@@ -15,15 +16,16 @@ class UserController
         $this->userRepository = new UserRepository();
     }
 
-    public function create(array $data): array
+    public function create(ServerRequestInterface $request): array
     {
         try {
+            $data = json_decode($request->getBody()->getContents(), true);
+
             // Validation des données
             if (empty($data['email']) || empty($data['password']) || empty($data['first_name']) || empty($data['last_name'])) {
                 throw new \InvalidArgumentException('Missing required fields');
             }
 
-            // Création de l'utilisateur
             $user = new User(
                 null,
                 $data['email'],

@@ -1,11 +1,17 @@
 <?php
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\ServerRequest;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 $routes = require __DIR__ . '/../src/config/routes.php';
 
-$requestMethod = $_SERVER['REQUEST_METHOD'];
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Créer la requête PSR-7
+$request = ServerRequest::fromGlobals();
+
+$requestMethod = $request->getMethod();
+$path = $request->getUri()->getPath();
 $routeKey = "$requestMethod $path";
 
 if (array_key_exists($routeKey, $routes)) {
@@ -19,28 +25,23 @@ if (array_key_exists($routeKey, $routes)) {
 
         $controller = new $controllerClass();
 
-        $input = json_decode(file_get_contents('php://input'), true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidArgumentException('Invalid JSON input');
-        }
-
         if (!method_exists($controller, $methodName)) {
             throw new Exception("Method '$methodName' not found in controller '$controllerClass'");
         }
 
-        $response = $controller->$methodName($input);
+        $response = $controller->$methodName($request);
 
-        header('Content-Type: application/json');
-        echo json_encode($response);
+        // Créer la réponse PSR-7
+        $response = new Response(200, ['Content-Type' => 'application/json'], json_encode($response));
     } catch (InvalidArgumentException $e) {
-        http_response_code(400); 
-        echo json_encode(['error' => $e->getMessage()]);
+        $response = new Response(400, [], json_encode(['error' => $e->getMessage()]));
     } catch (Exception $e) {
-        http_response_code(500); 
-        echo json_encode(['error' => $e->getMessage()]);
+        $response = new Response(500, [], json_encode(['error' => $e->getMessage()]));
     }
 } else {
-    http_response_code(404); 
-    echo json_encode(['error' => 'Route not found']);
+    $response = new Response(404, [], json_encode(['error' => 'Route not found']));
 }
+
+// Envoyer la réponse
+header('Content-Type: application/json');
+echo $response->getBody();
