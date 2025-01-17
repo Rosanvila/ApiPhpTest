@@ -14,6 +14,7 @@
     ],
     "require": {
         "guzzlehttp/psr7": "^2.7",
-        "laminas/laminas-httphandlerrunner": "^2.11"
+        "laminas/laminas-httphandlerrunner": "^2.11",
+        "nikic/fast-route": "^1.3"
     }
 }

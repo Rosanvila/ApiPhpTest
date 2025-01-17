@@ -3,8 +3,9 @@
 namespace App\Entity;
 
 use App\Entity\AbstractEntity;
+use JsonSerializable;
 
-class User extends AbstractEntity
+class User extends AbstractEntity implements JsonSerializable
 {
     private string $email;
     private string $password;
@@ -58,6 +59,16 @@ class User extends AbstractEntity
     public function setLastName(string $lastName): void
     {
         $this->lastName = $lastName;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'email' => $this->email,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName
+        ];
     }
 }
 

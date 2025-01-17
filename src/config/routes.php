@@ -1,5 +1,8 @@
 <?php
 
-return [
-    'POST /ApiPhpTest/api/users' => 'UserController@create',
-];
+use FastRoute\RouteCollector;
+
+return function (RouteCollector $r) {
+    $r->addRoute('POST', '/ApiPhpTest/api/users', 'UserController@create');
+    $r->addRoute('GET', '/ApiPhpTest/api/users', 'UserController@index');
+};
