@@ -40,13 +40,4 @@ final class UserRepository extends AbstractRepository
 
         return true;
     }
-
-    public function getAll(): array
-    {
-        $query = $this->db->query("SELECT * FROM {$this->table}");
-        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
-        return $this->fetchResult($result);
-    }
-
-    
 }

@@ -51,7 +51,7 @@ class UserController
     public function index(): Response
     {
         try {
-            $users = $this->userRepository->getAll();
+            $users = $this->userRepository->findAll();
             return ResponseHelper::jsonResponse($users, 200);
         } catch (PDOException $e) {
             return ResponseHelper::jsonResponse(['error' => $e->getMessage()], 500);
