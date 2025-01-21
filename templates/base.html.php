@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
+    <meta name="viewport" #}
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://bootswatch.com/5/united/bootstrap.min.css">
@@ -43,7 +43,7 @@
 
     <main class="container min-80-vh">
         <?php
-        include $pageContent ?>
+        include __DIR__ . "templates/meteo.html.php" ?>
     </main>
 
     <footer class="bd-footer bg-body-tertiary text-body-secondary py-5">

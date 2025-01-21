@@ -2,38 +2,51 @@
 
 namespace App\Service;
 
+use Exception;
+
 class CurlClient
 {
-    public function sendRequest(string $url, string $method, array $data = []): array
+    private string $apiKey;
+
+    public function __construct(string $apiKey)
     {
-        $ch = curl_init();
+        $this->apiKey = $apiKey;
+    }
 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+    public function callApi(string $endpoint): array
+    {
+        $curl = curl_init();
+        $certPath = __DIR__ . '/../config/cert.cer';
 
-        if (in_array($method, ['POST', 'PUT']) && !empty($data)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen(json_encode($data)),
-            ]);
+        if (!file_exists($certPath)) {
+            throw new Exception("Certificat introuvable : $certPath");
         }
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CAINFO         => $certPath,
+            CURLOPT_TIMEOUT        => 10,
+            CURLOPT_URL            => "https://api.openweathermap.org/data/2.5/{$endpoint}&units=metric&lang=fr&appid={$this->apiKey}"
+        ]);
 
-        if (curl_errno($ch)) {
-            $error = curl_error($ch);
-            curl_close($ch);
-            throw new \RuntimeException("cURL Error: $error");
+        $data = curl_exec($curl);
+
+        if ($data === false) {
+            throw new Exception(curl_error($curl));
         }
 
-        curl_close($ch);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        if ($httpCode !== 200) {
+            throw new Exception("Erreur lors de la requête : code HTTP $httpCode");
+        }
 
-        return [
-            'status' => $httpCode,
-            'response' => json_decode($response, true),
-        ];
+        $data = json_decode($data, true);
+
+        if ($data === null) {
+            throw new Exception("Erreur lors de la conversion du JSON");
+        }
+
+        curl_close($curl);
+        return $data;
     }
 }
